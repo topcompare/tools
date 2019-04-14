@@ -1,10 +1,10 @@
 /*
 To easily run this script in the browser console without copying pasting the whole code, use the following command:
-$.getScript("https://2pr8y52r20.codesandbox.io/backoffice-helper.js")
+$.getScript("https://cdn.jsdelivr.net/gh/topcompare/tools/backoffice-product-input-helper.js")
 
 You can/should load the data into the variable first:
-var list = ...
-
+var list = ... (for products)
+var rt = ... (for results tables)
 */
 console.log("Loading script version v0.1 20190321a");
 // Declare the data list variable
@@ -98,17 +98,17 @@ switch($(".page-title").text()) {
 
   case "Credit Cards Edit Result Table":
 
-    var rt = {"CAFI0003": {"VB-Def_payments": true, "VB-Basic_traveler": false}, "AMEX0006": {"VB-Def_payments": false, "VB-Basic_traveler": true}};
-    // Alternative: {"VB-Def_payments": {"CAFI003": true, "AMEX0006": false}, "VB-Basic_traveler": {"VB-Def_payments": {"CAFI003": true, "AMEX0006": false};
+    var rt = {"VB-Def_payments": {"CAFI0003": true, "AMEX0006": true}, "VB-Basic_traveler": {"CAFI0003": true, "AMEX0006": true}};
+    // Alternative: {"CAFI0003": {"VB-Def_payments": true, "VB-Basic_traveler": false}, "AMEX0006": {"VB-Def_payments": false, "VB-Basic_traveler": true}};
     var resultstable = $("#name").val();
      for (var i = 0; i < $(".product-cggid").length; i++) {
         let cggID = $(".product-cggid").eq(i).text().replace(/[^a-z0-9]/gi,'');
-        if (typeof rt[cggID] !== "undefined") {
-            if (typeof rt[cggID][resultstable] !== "undefined") {
-                console.log("Setting " + cggID + " to: " + rt[cggID][resultstable]);
+        if (typeof rt[resultstable] !== "undefined") {
+            if (typeof rt[resultstable][cggID] !== "undefined") {
+                console.log("Setting " + cggID + " to: " + rt[resultstable][cggID]);
                 let input_element = $(".product-cggid").eq(i).parent().parent().find("input");
                 // set the value
-                input_element.prop( "checked", rt[cggID][resultstable]);
+                input_element.prop( "checked", rt[resultstable][cggID]);
                 input_element.get(0).dispatchEvent(new Event('change'));
             } else {
                 console.log("No results table info in " + cggID + " for: "+ resultstable);
