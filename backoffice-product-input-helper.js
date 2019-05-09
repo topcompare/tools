@@ -97,9 +97,14 @@ switch($(".page-title").text()) {
     break;
 
   case "Credit Cards Edit Result Table":
-
-    var rt = {"VB-Def_payments": {"CAFI0003": true, "AMEX0006": true}, "VB-Basic_traveler": {"CAFI0003": true, "AMEX0006": true}};
-    // Alternative: {"CAFI0003": {"VB-Def_payments": true, "VB-Basic_traveler": false}, "AMEX0006": {"VB-Def_payments": false, "VB-Basic_traveler": true}};
+    if (typeof rt === "undefined") {
+        if (confirm('There is no restults table list defined (var rt = ...). Use the demo one?')) {
+            console.log("Loading default data list");
+			var rt = {"VB-Def_payments": {"CAFI0003": true, "AMEX0006": true}, "VB-Basic_traveler": {"CAFI0003": true, "AMEX0006": true}};
+        } else {
+            throw new Error("Need a valid data list to proceed!");
+        }
+    }
     var resultstable = $("#name").val();
      for (var i = 0; i < $(".product-cggid").length; i++) {
         let cggID = $(".product-cggid").eq(i).text().replace(/[^a-z0-9]/gi,'');
