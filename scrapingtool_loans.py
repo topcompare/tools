@@ -20,7 +20,6 @@ import shutil
 import urllib.request
 import re
 import csv
-import pdfbox
 from lxml import html
 
 
@@ -1270,7 +1269,7 @@ def belfius_loans():
 
 def belfius_save_loans():
     belfius_loans()
-    path = '~/TC_Crawling Tool/History/'  # saving file to the folder history
+    path = os.path.abspath("History/")  # saving file to the folder history
     file_name = str(datetime.datetime.now().strftime("%Y-%m-%d %H.%M")) + '.csv'
     belfius_loans_c.to_csv(os.path.join(path, file_name), index=False)
 
@@ -1870,7 +1869,7 @@ def bpost_loans():
 
 def bpost_save_loans():
     bpost_loans()
-    path = '~/TC_Crawling Tool/History/'  # saving file to the folder history
+    path = os.path.abspath("History/")  # saving file to the folder history
     file_name = str(datetime.datetime.now().strftime("%Y-%m-%d %H.%M")) + '.csv'
     bpost_loans_c.to_csv(os.path.join(path, file_name), index=False)
 
