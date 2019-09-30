@@ -36,11 +36,11 @@ switch($(".page-title").text()) {
                 return $(this).text() == list[cggID].Columns[i][0];
             });
             var input_element = anchor_element.parent().siblings().eq(0).find("input");
-            // set the value
-            input_element.val(list[cggID].Columns[i][1]);
+            // set the value (and convert , to . because BO does not accept the float otherwise
+            input_element.val(list[cggID].Columns[i][1].replace(/,/g, '.'));
             input_element.get(0).dispatchEvent(new Event('input'));
 
-            if (typeof input_element.val() !== "undefined" && input_element.val() == list[cggID].Columns[i][1]) {
+            if (typeof input_element.val() !== "undefined" && input_element.val() == list[cggID].Columns[i][1].replace(/,/g, '.')) {
                 console.log("%c done", "color: green");
             } else {
                 console.log("%c failed", "color: red");
@@ -55,17 +55,20 @@ switch($(".page-title").text()) {
                 return $(this).text() == list[cggID].Categories[i][0];
             });
             var input_element = anchor_element.parent().find("input");
-            // set the value
-            input_element.prop( "checked", list[cggID].Categories[i][1]);
-            input_element.get(0).dispatchEvent(new Event('change'));
-
+            // set the value if object found
+			if (input_element.length > 0) {
+				input_element.prop( "checked", list[cggID].Categories[i][1]);
+				input_element.get(0).dispatchEvent(new Event('change'));
+			} else {
+				console.log("%c Warning: field not found!", "color: grey");
+			}
             if (typeof input_element.prop("checked") !== "undefined" && input_element.prop("checked") == list[cggID].Categories[i][1]) {
                 console.log("%c done", "color: green");
             } else {
                 console.log("%c failed", "color: red");
             }
         }
-        // Categories: expects data pairs ["category_label", true/false or 1/0 ] in the "Categories" object of the list
+        // Sections: expects data pairs ["section_label", "free text / HTML"] in the "Sections" object of the list
         console.log("Entering SECTIONS of the More Info section. Current locale: "+ lang);
         for (var i = 0; i < list[cggID].Sections.length; i++) {
             console.log("Setting section "+i+ " out of "+ $(".more-info-input").length);
