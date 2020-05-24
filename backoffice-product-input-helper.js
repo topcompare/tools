@@ -35,10 +35,16 @@ switch($(".page-title").text()) {
             var anchor_element = $("span.column-title").filter(function() {
                 return $(this).text() == list[cggID].Columns[i][0];
             });
-            var input_element = anchor_element.parent().siblings().eq(0).find("input");
-            // set the value (and convert , to . because BO does not accept the float otherwise
-            input_element.val(list[cggID].Columns[i][1].replace(/,/g, '.'));
-            input_element.get(0).dispatchEvent(new Event('input'));
+		
+	    var input_element = anchor_element.parent().siblings().eq(0).find("input");			
+	    // The column label must match exactly with the value in the list, otherwise no object is returned
+	    if (typeof input_element.get(0) !== "undefined") {
+		    // set the value (and convert , to . because BO does not accept the float otherwise
+		    input_element.val(list[cggID].Columns[i][1].replace(/,/g, '.'));
+		    input_element.get(0).dispatchEvent(new Event('input'));	
+            } else {
+		    console.log("%c WARNING: "+list[cggID].Columns[i][0]+" not found. Check the spelling.", "color: red");
+            }
 
             if (typeof input_element.val() !== "undefined" && input_element.val() == list[cggID].Columns[i][1].replace(/,/g, '.')) {
                 console.log("%c done", "color: green");
