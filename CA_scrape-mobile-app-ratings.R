@@ -1,5 +1,4 @@
-#Code for monitoring the changes in App mobile scores
-
+rm(list = ls())
 is.installed=function(mypkg){
   is.element(mypkg, installed.packages()[,1])
 } 
@@ -12,7 +11,8 @@ if(!is.installed("readr")){
 if(!is.installed("rvest")){
   install.packages("rvest")
 }
-library(googlesheets)
+
+#library(googlesheets)
 library(readr)
 library(rvest)
 
@@ -27,7 +27,12 @@ colnames(appmob)[colnames(appmob)=="X6"]="Final score"
 colnames(appmob)[colnames(appmob)=="X7"]="URL G play"
 colnames(appmob)[colnames(appmob)=="X8"]="URL App store"
 
+
+##View(appmob)
+
+
 # PART1: Specifying the url for desired website to be scraped
+#play store
 appmob[1,7]='https://play.google.com/store/apps/details?id=com.kbc.mobile.android.phone.cbc' #CBC
 appmob[2,7]='https://play.google.com/store/apps/details?id=be.belfius.directmobile.android' #Belfius
 appmob[3,7]='https://play.google.com/store/apps/details?id=be.argenta.bankieren' #Argenta
@@ -41,16 +46,16 @@ appmob[10,7]='https://play.google.com/store/apps/details?id=MyING.be' #ING
 appmob[11,7]='https://play.google.com/store/apps/details?id=com.kbc.mobile.android.phone.kbc' #KBC
 appmob[12,7]='https://play.google.com/store/apps/details?id=be.keytradebank.phone' #Keytrade
 appmob[13,7]='https://play.google.com/store/apps/details?id=be.bankdekremer.mobile' #Bank de Kremer
-appmob[14,7]='https://play.google.com/store/apps/details?id=be.montepaschi.android.app' #Banca Monte Paschi Belgio
+appmob[14,7]= 'https://play.google.com/store/apps/details?id=com.beobank_prod.bad&hl=en'#Beobank
 appmob[15,7]='https://play.google.com/store/apps/details?id=com.db.pbc.mybankbelgium' #Deutsche Bank
 appmob[16,7]='https://play.google.com/store/apps/details?id=com.bnpp.easybanking.fintro' #Fintro
 appmob[17,7]='https://play.google.com/store/apps/details?id=be.dlbank.mobilebankingapp' #Nagelmackers
 appmob[18,7]='https://play.google.com/store/apps/details?id=com.vdk.prod' #VDK
 appmob[19,7]='https://play.google.com/store/apps/details?id=be.cph.cphmobile&hl=en' #CPH
-appmob[20,7]='https://play.google.com/store/apps/details?id=com.beobank_prod.bad&hl=en' #Beobank
+appmob[20,7]='https://play.google.com/store/apps/details?id=be.aion.android.app&hl=en' #Aion
 
-
-
+##url_list = list(app)
+##APP store
 
 appmob[1,8]='https://itunes.apple.com/be/app/cbc-mobile/id458081756?mt=8' #CBC
 appmob[2,8]='https://itunes.apple.com/be/app/belfius-mobile/id572835707?mt=8' #Belfius
@@ -65,13 +70,13 @@ appmob[10,8]='https://itunes.apple.com/be/app/ing-smart-banking-for-iphone/id437
 appmob[11,8]='https://itunes.apple.com/be/app/kbc-mobile/id458066754?mt=8' #KBC
 appmob[12,8]='https://itunes.apple.com/be/app/keytrade-bank/id640974593?mt=8' #Keytrade
 appmob[13,8]='https://itunes.apple.com/be/app/bank-de-kremer/id1382705162?mt=8' #Bank de Kremer
-appmob[14,8]='https://itunes.apple.com/be/app/paschi-mobile/id1364879675?l=fr&mt=8' #Banca Monte Paschi Belgio
+appmob[14,8]='https://apps.apple.com/be/app/beobank-mobile/id1008666594' #Beobank
 appmob[15,8]='https://itunes.apple.com/be/app/mybank-belgium/id1082668633' #Deutsche Bank
 appmob[16,8]='https://itunes.apple.com/be/app/fintro-easy-banking-smartphone/id544288649?mt=8' #Fintro
 appmob[17,8]='https://itunes.apple.com/be/app/nagelmackers/id885804394?mt=8' #Nagelmackers
 appmob[18,8]='https://itunes.apple.com/be/app/mobile-vdk/id895434057?mt=8' #VDK
 appmob[19,8]='https://itunes.apple.com/be/app/cph-mobile/id935210539?l=fr&mt=8' #CPH
-appmob[20,8]='https://itunes.apple.com/be/app/beobank-mobile/id1008666594?mt=8' #Beobank
+appmob[20,8]='https://apps.apple.com/be/app/aion/id1488299047'#Aion
 
 #PART2: All the values in a table
 for(i in 1:nrow(appmob)){
@@ -121,12 +126,25 @@ for(i in 1:nrow(appmob)){
   }
 }
 
+appmob$`Rate G Play`<- as.numeric(appmob$`Rate G Play`)
+appmob$`Rate App store`<- as.numeric(appmob$`Rate App store`)
+appmob$`Number of reviews G play`<- as.numeric(appmob$`Number of reviews G play`)
+appmob$`Number of reviews App store`<- as.numeric(appmob$`Number of reviews App store`)
+
+appmob$`Final score`<- (appmob$`Rate G Play`*appmob$`Number of reviews G play`/(appmob$`Number of reviews G play`+appmob$`Number of reviews App store`) + appmob$`Rate App store`*appmob$`Number of reviews App store`/(appmob$`Number of reviews G play`+ appmob$`Number of reviews App store`))
+
+#View(appmob)
+
+#export the CSV file 
+
+write.csv(appmob,"C:\\Users\\pratik\\Downloads\\Mobile_Rating.csv",row.names = FALSE)
+
 
 #PART3: Make the link with the sheet in the "Accounts products catalog" googlesheet
-for_gs=gs_title("Accounts product catalog")
-for_gs_sheet=gs_read(for_gs)
-gs_edit_cells(for_gs, ws = "Mobile App", anchor = "B2", input = appmob[,1], byrow = FALSE)
-gs_edit_cells(for_gs, ws = "Mobile App", anchor = "C2", input = appmob[,2], byrow = FALSE)
-gs_edit_cells(for_gs, ws = "Mobile App", anchor = "D2", input = appmob[,3], byrow = FALSE)
-gs_edit_cells(for_gs, ws = "Mobile App", anchor = "E2", input = appmob[,4], byrow = FALSE)
-gs_edit_cells(for_gs, ws = "Mobile App", anchor = "F2", input = appmob[,5], byrow = FALSE)
+#for_gs=gs_title("Accounts product catalog")
+#for_gs_sheet=gs_read(for_gs)
+#gs_edit_cells(for_gs, ws = "Mobile App", anchor = "B2", input = appmob[,1], byrow = FALSE)
+#gs_edit_cells(for_gs, ws = "Mobile App", anchor = "C2", input = appmob[,2], byrow = FALSE)
+#gs_edit_cells(for_gs, ws = "Mobile App", anchor = "D2", input = appmob[,3], byrow = FALSE)
+#gs_edit_cells(for_gs, ws = "Mobile App", anchor = "E2", input = appmob[,4], byrow = FALSE)
+#gs_edit_cells(for_gs, ws = "Mobile App", anchor = "F2", input = appmob[,5], byrow = FALSE)
